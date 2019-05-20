@@ -1,0 +1,100 @@
+##### Defining constants with convenience functions
+# Define a 3x4 tensor with all values equal to 9
+x = fill([3, 4], 9)
+
+# Define a tensor of ones with the same shape as x
+y = ones_like(x)
+
+# Define the one-dimensional vector, z
+z = constant([1, 2, 3, 4])
+
+# Print z as a numpy array
+print(z.numpy())
+
+##### Defining variables
+# Define the 1-dimensional variable X
+X = Variable([1, 2, 3, 4])
+
+# Print the variable X
+print(X)
+
+# Convert X to a numpy array and assign it to Z
+Z = X.numpy()
+
+# Print the numpy array Z
+print(Z)
+
+##### Checking properties of tensors
+X is a constant, Y is a variable, and X is the tensor [1, 2, 3, 4].
+
+##### Performing element-wise multiplication
+# Define tensors A0 and B0 as constants
+A0 = constant([1, 2, 3, 4])
+B0 = constant([[1, 2, 3], [1, 6, 4]])
+
+# Define A1 and B1 to have the correct shape
+A1 = ones_like(A0)
+B1 = ones_like(B0)
+
+# Perform element-wise multiplication
+A2 = multiply(A0,A1)
+B2 = multiply(B0,B1)
+
+# Print the tensors A2 and B2
+print(A2.numpy())
+print(B2.numpy())
+
+##### Making predictions with matrix multiplication
+# Define X, b, and y as constants
+X = constant([[1, 2], [2, 1], [5, 8], [6, 10]])
+b = constant([[1], [2]])
+y = constant([[6], [4], [20], [23]])
+
+# Compute ypred using X and b
+ypred = matmul(X,b)
+
+# Compute the error as y - ypred
+error = subtract(y, ypred)
+
+##### Summing over tensor dimensions
+Combined, the 5 individuals hold $50,000 in bonds.
+
+##### Reshaping tensors
+# Define input data
+image = ones([16, 16])
+
+# Reshape input data into a vector
+image_vector = reshape(image, (256, 1))
+
+# Reshape input data into a higher dimensional tensor
+image_tensor = reshape(image, (4, 4, 4, 4))
+
+##### Optimizing with gradients
+# Define x as a variable equal to 0.0
+x = Variable(0.0)
+
+# Define y as x*x and apply Gradient Tape
+with GradientTape() as tape:
+	tape.watch(x)
+	y = multiply(x,x)
+	
+# Compute the gradient of y with respect to x
+g = tape.gradient(y, x)
+
+# Compute and print the gradient
+print(g.numpy())
+
+##### Performing graph-based computations
+# Reshape b from a 1x3 to a 3x1 tensor
+b = reshape(b, (3, 1))
+
+# Multiply L by b
+L1 = matmul(L, b)
+
+# Sum over L1, evaluate, and print
+L2 = reduce_sum(L1)
+print(L2.numpy())
+
+
+
+
