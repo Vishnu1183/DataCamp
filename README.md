@@ -1,2 +1,2 @@
 # DataCamp
-This repo contains the codes and slides of the datacamp courses finished by me
+#This repo contains the codes of the datacamp courses finished by me
