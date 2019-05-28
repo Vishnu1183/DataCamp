@@ -1,0 +1,67 @@
+########################### Turbo Charged Code: Parallel Programming ################
+
+##### How many cores does this machine have?
+# Load the parallel package
+library(parallel)
+
+# Store the number of cores in the object no_of_cores
+no_of_cores <- detectCores()
+
+# Print no_of_cores
+no_of_cores
+
+##### Can this loop run in parallel (1)?
+No: it's a sequential algorithm. The ith value depends on the previous value.
+
+
+##### Can this loop run in parallel (2)?
+Yes, this is embarrassingly parallel. We can simulate the games in any order.
+
+##### Moving to parallel programming
+Sometimes parApply() is faster; it just depends on the problem.
+
+##### Moving to parApply
+# Determine the number of available cores
+detectCores()
+
+# Create a cluster via makeCluster
+cl <- makeCluster(2)
+
+# Parallelize this code
+parApply(cl,dd,2, median)
+
+# Stop the cluster
+stopCluster(cl)
+
+
+##### Using parSapply()
+library("parallel")
+# Create a cluster via makeCluster (2 cores)
+cl <- makeCluster(2)
+
+# Export the play() function to the cluster
+clusterExport(cl, "play")
+
+# Re-write sapply as parSapply
+res <- parSapply(cl,1:100, function(i) play())
+
+# Stop the cluster
+stopCluster(cl)
+
+
+##### Timings parSapply()
+# Set the number of games to play
+no_of_games <- 1e5
+
+## Time serial version
+system.time(serial <- sapply(1:no_of_games, function(i) play()))
+
+## Set up cluster
+cl <- makeCluster(4)
+clusterExport(cl, "play")
+
+## Time parallel version
+system.time(par <- parSapply(cl,1:no_of_games, function(i) play()))
+
+## Stop cluster
+stopCluster(cl)
