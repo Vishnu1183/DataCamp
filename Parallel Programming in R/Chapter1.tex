@@ -1,0 +1,169 @@
+####################### Can I Run My Application in Parallel?   #######################
+
+##### Partitioning demographic model
+Submodels Births, Deaths and Migration can run in parallel but not Population.
+
+
+##### Partitioning probabilistic demographic model
+B and D
+
+
+##### Find the most frequent words in a text
+
+
+
+#####
+
+
+
+##### A simple embarrassingly parallel application -- 1
+# Complete the function definition
+mean_of_rnorm <- function(n) {
+  # Generate normally distributed random numbers
+  random_numbers <- rnorm(n)
+  # Calculate the mean of the random numbers
+  return(mean(random_numbers))
+}
+
+# Try it out
+mean_of_rnorm(100)
+
+
+##### A simple embarrassingly parallel application -- 2
+# From previous step
+mean_of_rnorm <- function(n) {
+  random_numbers <- rnorm(n)
+  mean(random_numbers)
+}
+
+# Create a vector to store the results
+result <- rep(NA,n_replicates)
+
+# Set the random seed to 123
+set.seed(123)
+
+# Set up a for loop with iter from 1 to n_replicates
+for (iter in 1:n_replicates) {
+  # Call mean_of_rnorm with n_numbers_per_replicate
+  result[iter] <- mean_of_rnorm(n_numbers_per_replicate)
+}
+
+# View the result
+hist(result)
+
+
+
+##### A simple embarrassingly parallel application -- 3
+# From previous step
+mean_of_rnorm <- function(n) {
+  random_numbers <- rnorm(n)
+  mean(random_numbers)
+}
+
+# Repeat n_numbers_per_replicate, n_replicates times
+n <- rep(n_numbers_per_replicate, n_replicates)
+
+# Call mean_of_rnorm() repeatedly using sapply()
+result <- sapply(
+  # The vectorized argument to pass
+  n, 
+  # The function to call
+  mean_of_rnorm
+)
+
+# View the results
+hist(result)
+
+
+##### Probabilistic projection of migration (setup)
+Matrix where traj_len corresponds to columns and block_size corresponds to rows.
+
+##### Probabilistic projection of migration
+# Function definition of ar1_multiple_blocks_of_trajectories()
+ar1_multiple_blocks_of_trajectories <- function(ids, ...) {
+  # Call ar1_block_of_trajectories() for each ids
+  trajectories_by_block <- lapply(ids, ar1_block_of_trajectories, ...)
+  
+  # rbind results
+  do.call(rbind, trajectories_by_block)
+}
+
+# Create a sequence from 1 to number of blocks
+traj_ids <- seq_len(nrow(ar1est))
+
+# Generate trajectories for all rows of the estimation dataset
+trajs <- ar1_multiple_blocks_of_trajectories(
+  ids = traj_ids, rate0 = 0.015,
+  block_size = 10, traj_len = 15
+)
+
+# Show results
+show_migration(trajs)
+
+
+##### Passing arguments via clusterApply()  -- 1
+# Load parallel
+library(parallel)
+
+# How many physical cores are available?
+ncores = detectCores(logical =FALSE)
+
+# How many random numbers to generate
+n = seq(ncores:1)
+
+
+
+##### Passing arguments via clusterApply()  -- 2
+# From previous step
+library(parallel)
+ncores <- detectCores(logical = FALSE)
+n <- ncores:1
+
+# Use lapply to call rnorm for each n,
+# setting mean to 10 and sd to 2 
+lapply(n, rnorm, mean = 10, sd = 2)
+
+
+
+##### Passing arguments via clusterApply()  -- 3
+# From previous step
+library(parallel)
+ncores <- detectCores(logical = FALSE)
+n <- ncores:1
+
+# Create a cluster
+cl <- makeCluster(ncores)
+
+# Use clusterApply to call rnorm for each n in parallel,
+# again setting mean to 10 and sd to 2 
+clusterApply(cl, n, rnorm, mean = 10, sd = 2)
+
+# Stop the cluster
+stopCluster(cl)
+
+
+#####  Sum in parallel
+# Evaluate partial sums in parallel
+part_sums <- clusterApply(cl, x = c(1, 51),
+                    fun = function(x) sum(x:(x + 49)))
+# Total sum
+total <- sum(unlist(part_sums))
+
+# Check for correctness
+total == sum(1:100)
+
+
+##### More tasks than workers
+# Create a cluster and set parameters
+cl <- makeCluster(2)
+n_replicates <- 50
+n_numbers_per_replicate <- 10000
+
+# Repeat n_numbers_per_replicate, n_replicates times
+n <- rep(n_numbers_per_replicate, n_replicates)
+
+# Parallel evaluation
+means <- clusterApply(cl, x = n, fun = mean_of_rnorm)
+                
+# View results as histogram
+hist(unlist(means))
