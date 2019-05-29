@@ -1,1 +1,55 @@
+##########################  The parallel Package   ##################
 
+##### Exploring the cluster object
+# Load the parallel package
+library(parallel)
+
+# Make a cluster with 4 nodes
+cl <- makeCluster(4)
+
+# Investigate the structure of cl
+str(cl)
+
+# What is the process ID of the workers?
+clusterCall(cl, Sys.getpid)
+
+# Stop the cluster
+stopCluster(cl)
+
+
+
+##### Socket vs. Fork (I) ---1
+# A global variable and a print function are defined
+a_global_var <- "before"
+print_global_var <- function() print(a_global_var)
+
+# Create a socket cluster with 2 nodes
+cl_sock <- makeCluster(2, type = "PSOCK")
+
+# Evaluate the print function on each node
+  clusterCall(cl_sock,print_global_var)
+
+# Stop the cluster
+stopCluster(cl_sock)
+
+
+
+##### Socket vs. Fork (I) ---2
+# A global variable and a print function are defined
+a_global_var <- "before"
+print_global_var <- function() print(a_global_var)
+
+# Create a fork cluster with 2 nodes
+cl_fork <- makeCluster(2, "FORK")
+
+# Evaluate the print function on each node
+clusterCall(cl_fork,print_global_var)
+
+# Change the global var to "after"
+a_global_var <- 'after'
+
+# Evaluate the print fun on each node again
+clusterCall(cl_fork,print_global_var)
+
+# Stop the cluster
+stopCluster(cl_fork)
