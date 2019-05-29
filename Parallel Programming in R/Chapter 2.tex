@@ -190,36 +190,90 @@ clusterEvalQ(
 })
 
 # Run myrdnorm in parallel
-res <- clusterApply(cl,x = 20,myrdnorm)
-
-# Plot the results
-plot(table(unlist(res)))
-
-
-
-##### Setting global variables
-# From previous step
-myrdnorm <- function(n) {
-  rdnorm(n, mean = mean, sd = sd)
-}
-
-# Set number of numbers to generate
-n <- rep(1000, 20)
-
-# Run an expression on each worker
-clusterEvalQ(
-  cl, {
-    # Load extraDistr
-    library(extraDistr)
-    # Set mean to 10
-    mean <- 10
-    # Set sd to 5
-    sd <- 5
-})
-
-# Run myrdnorm in parallel
 res <- clusterApply(cl,x = rep(1000,20),myrdnorm)
 
 # Plot the results
 plot(table(unlist(res)))
+
+
+#####   Exporting global objects
+# Set global objects on master: mean to 20, sd to 10
+mean <- 20
+sd <- 10
+
+# Load extraDistr on workers
+clusterEvalQ(cl, library(extraDistr))
+
+# Export global objects to workers
+clusterExport(cl, c("mean", "sd"))
+
+# Run myrdnorm in parallel
+res <- clusterApply(cl, n, myrdnorm)
+
+# Plot the results
+plot(table(unlist(res)))
+
+
+
+##### Passing data as arguments -- 1
+# Remind yourself how select_words() works
+select_words
+
+# Select words beginning with "v", at least 10 letters long
+words_v10 <- select_words(words,"v",10)
+
+# Get the unique words
+unique(words_v10)
+
+
+##### Passing data as arguments -- 2
+# Generate 2 random groups
+groups <- sample(2, length(words), replace = TRUE)
+
+# See those groups
+head(groups, 20)
+
+# Split words into groups
+split_words <- split(words, groups)
+
+
+##### Passing data as arguments -- 3
+# From previous step
+groups <- sample(2, length(words), replace = TRUE)
+split_words <- split(words, groups)
+                      
+# Apply select_words() to each element of split_words in parallel
+res <- clusterApply(cl,split_words,  select_words, letter = 'v', min_length = 10)
+ 
+# Flatten the result
+words_v10 <- unlist(res)
+
+# Get the unique words
+unique(words_v10)
+
+
+
+##### Chunking migration application on worker's side
+# Export data and functions
+clusterExport(cl, c("ar1est", "ar1_one_trajectory", "ar1_block_of_trajectories"))
+
+# Process ar1_multiple_blocks_of_trajectories in parallel
+res <- clusterApply(cl, 1:nrow(ar1est), 
+                    fun = ar1_multiple_blocks_of_trajectories)
+                    
+# Combine results into a matrix and show results        
+trajs <- do.call(rbind, res)
+show_migration(trajs)
+
+
+##### Alternative chunking
+# Split task into 5 chunks
+ind <- splitIndices(nrow(ar1est), 5)
+
+# Process ar1_multiple_blocks_of_trajectories in parallel
+res <- clusterApply(cl, ind, ar1_multiple_blocks_of_trajectories)
+
+# Compare the structure of the results 
+str(res)
+str(res_prev)
 
