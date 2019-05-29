@@ -17,7 +17,6 @@ clusterCall(cl, Sys.getpid)
 stopCluster(cl)
 
 
-
 ##### Socket vs. Fork (I) ---1
 # A global variable and a print function are defined
 a_global_var <- "before"
@@ -31,7 +30,6 @@ cl_sock <- makeCluster(2, type = "PSOCK")
 
 # Stop the cluster
 stopCluster(cl_sock)
-
 
 
 ##### Socket vs. Fork (I) ---2
@@ -53,3 +51,175 @@ clusterCall(cl_fork,print_global_var)
 
 # Stop the cluster
 stopCluster(cl_fork)
+
+
+##### Socket vs. Fork (II)
+A and C
+
+
+##### Benchmarking setup --1
+# Wrap this code into a function
+mean_of_rnorm_sequentially <- function(n_numbers_per_replicate,n_replicates)
+{
+n <- rep(n_numbers_per_replicate, n_replicates)
+lapply(n, mean_of_rnorm)
+}
+
+# Call it to try it
+mean_of_rnorm_sequentially(1000, 5)
+
+
+##### Benchmarking setup --2
+# Wrap this code into a function
+mean_of_rnorm_in_parallel <- function(n_numbers_per_replicate,n_replicates){
+n <- rep(n_numbers_per_replicate, n_replicates)
+clusterApply(cl, n, mean_of_rnorm) 
+}
+
+# Call it to try it
+mean_of_rnorm_in_parallel(1000, 5)
+
+
+##### Task size matters  -- 1
+# Set numbers per replicate to 5 million
+n_numbers_per_replicate <- 5000000
+
+# Set number of replicates to 4
+n_replicates <- 4
+
+# Run a microbenchmark
+microbenchmark(
+  # Call mean_of_rnorm_sequentially()
+  mean_of_rnorm_sequentially(n_numbers_per_replicate, n_replicates), 
+  # Call mean_of_rnorm_in_parallel()
+  mean_of_rnorm_in_parallel(n_numbers_per_replicate, n_replicates),
+  times = 1, 
+  unit = "s"
+)
+
+##### Task size matters  -- 2
+# Change the numbers per replicate to 100
+n_numbers_per_replicate <- 100
+
+# Change number of replicates to 100
+n_replicates <- 100
+
+# Rerun the microbenchmark
+microbenchmark(
+  mean_of_rnorm_sequentially(n_numbers_per_replicate, n_replicates), 
+  mean_of_rnorm_in_parallel(n_numbers_per_replicate, n_replicates),
+  times = 1, 
+  unit = "s"
+)
+
+##### Loading package on nodes --1
+# Pre-defined myrdnorm 
+myrdnorm <- function(n, mean = 0, sd = 1) 
+    rdnorm(n, mean = mean, sd = sd)
+
+# Parameters
+n_numbers_per_replicate <- 1000
+n_replicates <- 20
+
+# Repeat n_numbers_per_replicate, n_replicates times
+n <- rep(n_numbers_per_replicate,n_replicates)
+
+# Load extraDistr on master
+library(extraDistr)
+
+# Run myrdnorm in parallel. This should fail!
+res <- clusterApply(cl,x = n, myrdnorm)
+
+
+##### Loading package on nodes --2
+# From previous step
+myrdnorm <- function(n, mean = 0, sd = 1) 
+    rdnorm(n, mean = mean, sd = sd)
+n_numbers_per_replicate <- 1000
+n_replicates <- 20
+n <- rep(n_numbers_per_replicate, n_replicates)
+
+# Load extraDistr on master
+library(extraDistr)
+
+# Load extraDistr on all workers
+clusterEvalQ(cl, library(extraDistr))
+
+# Run myrdnorm in parallel. It should work now!
+res <- clusterApply(cl, x = n,myrdnorm)
+
+# Plot the result
+plot(table(unlist(res)))
+
+
+##### Setting global variables --1
+# rdnorm(), but using global variables
+myrdnorm <- function(n) {
+  rdnorm(n, mean = mean, sd = sd)
+}
+
+# Set mean to 10, globally
+mean <- 10
+
+# Set sd to 5, globally
+sd <- 5
+
+# Generate 1000 numbers with myrdnorm()
+myrdnorm(1000)
+
+
+
+##### Setting global variables -- 2
+# From previous step
+myrdnorm <- function(n) {
+  rdnorm(n, mean = mean, sd = sd)
+}
+
+# Set number of numbers to generate
+n <- rep(1000, 20)
+
+# Run an expression on each worker
+clusterEvalQ(
+  cl, {
+    # Load extraDistr
+    library(extraDistr)
+    # Set mean to 10
+    mean <- 10
+    # Set sd to 5
+    sd <- 5
+})
+
+# Run myrdnorm in parallel
+res <- clusterApply(cl,x = 20,myrdnorm)
+
+# Plot the results
+plot(table(unlist(res)))
+
+
+
+##### Setting global variables
+# From previous step
+myrdnorm <- function(n) {
+  rdnorm(n, mean = mean, sd = sd)
+}
+
+# Set number of numbers to generate
+n <- rep(1000, 20)
+
+# Run an expression on each worker
+clusterEvalQ(
+  cl, {
+    # Load extraDistr
+    library(extraDistr)
+    # Set mean to 10
+    mean <- 10
+    # Set sd to 5
+    sd <- 5
+})
+
+# Run myrdnorm in parallel
+res <- clusterApply(cl,x = rep(1000,20),myrdnorm)
+
+# Plot the results
+plot(table(unlist(res)))
+
