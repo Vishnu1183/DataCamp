@@ -106,87 +106,69 @@ barplot(res, las = 2)
 
 
 
-##### 
-
-
-
-
-
-##### 
-
-
-
-
-
-##### 
-
-
-
-
-
-##### 
-
-
-
-
-
-##### 
-
-
-
-
-
-##### 
-
-
-
-
-
-##### 
-
-
-
-
-
-##### 
-
-
-
-
-
-##### 
-
-
-
-
-
-##### 
-
-
-
-
-
-##### 
-
-
-
-
-
-##### 
-
-
-
-
-
-##### 
-
-
-
-
-
-##### 
-
-
-
-
+##### Planning future
+# multicore function
+fapply_mc <- function(cores = 2, ...) {
+    # future plan
+    plan(multicore, workers = cores) 
+    freq_fapply(words, chars, ...)
+}
+
+# cluster function
+fapply_cl <- function(cores = NULL, ...) {
+    # default value for cores
+    if(is.null(cores))
+        cores <- rep(c("oisin", "oscar"), each = 16)
+        
+    # future plan
+    plan(cluster, workers = cores) 
+    freq_fapply(words, chars, ...)
+}
+
+
+
+##### Benchmark future  --1
+# Microbenchmark
+microbenchmark(fapply_seq = fapply_seq(),
+               fapply_mc_2 = fapply_mc(cores=2), 
+               fapply_mc_10 = fapply_mc(cores=10),
+               fapply_cl = fapply_cl(cores=2), 
+               times = 1)
+
+
+##### Benchmark future  --2
+# Which is the slowest?
+slowest1 <- "fapply_cl"
+
+
+
+##### Load balancing
+# Benchmark clusterApply and clusterApplyLB
+microbenchmark(
+    clusterApply(cl,tasktime, Sys.sleep),
+    clusterApplyLB(cl,tasktime,Sys.sleep),
+    times = 1
+)
+
+# Plot cluster usage
+plot_cluster_apply(cl,tasktime, Sys.sleep)
+plot_cluster_applyLB(cl,tasktime, Sys.sleep)
+
+
+
+
+##### Scheduling
+  # Plot cluster usage for parSapply
+plot_parSapply(cl, tasktime, Sys.sleep)
+
+# Microbenchmark
+microbenchmark(
+    clusterApplyLB(cl, bias_tasktime, Sys.sleep),
+    parSapply(cl, bias_tasktime, Sys.sleep),
+    times = 1
+)
+
+# Plot cluster usage for parSapply and clusterApplyLB
+plot_parSapply(cl, bias_tasktime, Sys.sleep)
+plot_cluster_applyLB(cl, bias_tasktime, Sys.sleep)
 
