@@ -14,43 +14,93 @@ barplot(result, las = 2)
 
 
 
-##### 
+##### Multiple iterators in word frequency
+# foreach()%do% construct with 2 iterators
+result <- foreach(let = letters, n = c(rep(2,13),rep(6,13)), .combine = c) %do%
+                max_frequency(let, words = words, min_length = n)
+            
+# Plot results
+barplot(result, las = 2)
 
 
 
 
 
-##### 
+##### Using doParallel
+# Register doParallel with 3 cores
+registerDoParallel(cores = 3)
+
+# foreach()%dopar% loop
+res <- foreach(r = rep(1000, 100), .combine = rbind, 
+            .packages = "extraDistr") %dopar% myrdnorm(r)
+            
+# Dimensions of res
+dim_res <- c(100, 1000)
 
 
 
 
 
-##### 
+##### Word frequency with doParallel
+# Function for doParallel foreach
+freq_doPar <- function(cores, min_length = 5) {
+    # Register a cluster of size cores
+    registerDoParallel(cores = cores)
+    
+    # foreach loop
+    foreach(let = chars, .combine = c, 
+            .export = c("max_frequency", "select_words", "words"),
+            .packages = c("janeaustenr", "stringr")) %dopar% 
+        max_frequency(let, words = words, min_length = min_length)
+}
+
+# Run on 2 cores
+freq_doPar(2)
 
 
 
 
-
-##### 
-
-
-
-
-
-##### 
-
-
-
-
-
-##### 
+##### Word frequency with doFuture and benchmarking  --1
+# Function for doFuture foreach
+freq_doFut <- function(cores, min_length = 5) {
+    # Register and set plan
+    registerDoFuture()
+    plan(cluster, workers = cores)
+    
+    # foreach loop
+    foreach(let = chars, .combine = c) %dopar% 
+        max_frequency(let, words = words, min_length = min_length)
+}
 
 
 
 
+##### Word frequency with doFuture and benchmarking  --2
+# Benchmark
+microbenchmark(freq_seq(min_length), 
+               freq_doPar(cores, min_length), 
+               freq_doFut(cores, min_length),
+               times = 1)
 
-##### 
+  
+  
+##### Word frequency with future.apply
+# Main function
+freq_fapply <- function(words, chars = letters, min_length = 5) {
+    unlist(
+        future_lapply(chars, max_frequency, words = words, 
+                         min_length = min_length)
+    )
+}
+
+# Extract words
+words <- extract_words_from_text(obama_speech)
+
+# Call the main function
+res <- freq_fapply(words)
+
+# Plot results
+barplot(res, las = 2)
 
 
 
