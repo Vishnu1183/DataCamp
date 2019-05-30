@@ -1,1 +1,159 @@
+########################    Random Numbers and Reproducibility   ###############################
+
+
+##### Reproducibility (I)
+No, because it sets the RNG seed only on the master process.
+
+
+##### SOCK vs. FORK  --1
+# Register the SOCK cluster
+cl.sock <- makeCluster(2, type = "SOCK")
+registerDoParallel(cl.sock)
+replicate(
+  # Use 2 replicates
+  n = 2, 
+  expr = {
+    # Set the seed to 100
+    set.seed(100)
+    # Run two iterations in parallel, bound by rows
+    foreach(i = 1:2, .combine = rbind) %dopar% rnorm(3)
+  }, 
+  simplify = FALSE
+)
+
+
+
+##### SOCK vs. FORK  --2
+# Change this to register the FORK cluster
+registerDoParallel(cl.fork)
+
+# Run this again and look at the output!
+replicate(
+  n = 2, 
+  expr = {
+    set.seed(100)
+    foreach(i = 1:2, .combine = rbind) %dopar% rnorm(3)
+  }, 
+  simplify = FALSE
+)
+
+
+
+##### SOCK vs. FORK & random numbers
+FORK generates the same random numbers on each node because nodes are copies of the master.
+
+
+##### Setting an RNG
+# Create a cluster
+cl <- makeCluster(2)
+
+# Check RNGkind on workers
+clusterCall(cl, RNGkind)
+
+# Set the RNG seed on workers
+clusterSetRNGStream(cl, 100)
+
+# Check RNGkind on workers
+clusterCall(cl, RNGkind)
+
+
+
+
+
+##### Reproducible results in parallel  --1
+# The cluster, & how many numbers to generate
+cl
+n_vec
+
+t(replicate(
+  # Use 3 replicates
+  n = 3,
+  expr = {
+    # Spread across cl, apply mean_of_rnorm() to n_vec
+    clusterApply(cl, n_vec,mean_of_rnorm)
+  }
+))
+
+
+
+
+
+##### Reproducible results in parallel  --2
+t(replicate(
+  n = 3,
+  expr = {
+    # Set the cluster's RNG stream seed to 1234
+    clusterSetRNGStream(cl, iseed = 1234)
+    clusterApply(cl, n_vec, mean_of_rnorm)
+  }
+))
+
+
+
+
+
+##### Non-reproducible results in parallel --1
+# Make a cluster of size 2
+cl2 <- makeCluster(2)
+
+# Set the cluster's RNG stream seed to 1234
+clusterSetRNGStream(cl2, iseed = 1234)
+
+# Spread across the cluster, apply mean_of_rnorm() to n_vec
+unlist(clusterApply(cl2, n_vec, mean_of_rnorm))
+
+
+
+
+##### Non-reproducible results in parallel --2
+# From previous step
+cl2 <- makeCluster(2)
+clusterSetRNGStream(cl2, iseed = seed)
+unlist(clusterApply(cl2, n_vec, mean_of_rnorm))
+
+# Do the same, with 4 nodes
+cl4 <- makeCluster(4)
+clusterSetRNGStream(cl4, iseed = seed)
+unlist(clusterApply(cl4, n_vec, mean_of_rnorm))
+
+
+
+##### Reproducibility (II) 
+Yes. It registers the L'Ecuyer RNG, sets its seed and each replication uses its own stream.
+
+
+##### Reproducing migration app with foreach
+# Register doParallel and doRNG
+registerDoParallel(cores = 2)
+registerDoRNG(seed)
+
+# Run foreach
+mpar <- foreach(r = 1:5) %dopar% ar1_block_of_trajectories(r)
+
+# Register sequential backend, set seed and repeat foreach
+registerDoSEQ()
+set.seed(seed)
+mseq <- foreach(r = 1:5) %dorng% ar1_block_of_trajectories(r)
+
+# Check if results identical
+identical(mpar, mseq)
+
+
+
+
+
+##### Reproducing migration app with future.apply
+# Set multiprocess plan 
+plan(multiprocess, workers = 2)
+
+# Call ar1_block_of_trajectories via future_lapply
+mfpar <- future_lapply(1:5, ar1_block_of_trajectories, future.seed = seed)
+
+# Repeat for sequential plan
+plan(sequential)
+mfseq <- future_lapply(1:5, ar1_block_of_trajectories, future.seed = seed)
+
+# Check if results are identical
+identical(mfpar, mfseq)
+
 
