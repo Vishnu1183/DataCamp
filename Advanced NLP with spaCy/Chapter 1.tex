@@ -1,0 +1,192 @@
+##########################  Finding words, phrases, names and concepts ##########################
+
+
+##### Getting Started  --1
+# Import the English language class
+from spacy.lang.en import English
+
+# Create the nlp object
+nlp = English()
+
+# Process a text
+doc = nlp("This is a sentence.")
+
+# Print the document text
+print(doc.text)
+
+
+
+##### Getting Started  --2
+# Import the German language class
+from spacy.lang.de import German
+
+# Create the nlp object
+nlp = German()
+
+# Process a text (this is German for: "Kind regards!")
+doc = nlp("Liebe Grüße!")
+
+# Print the document text
+print(doc.text)
+
+
+
+##### Getting Started  --3
+# Import the Spanish language class
+from spacy.lang.es import Spanish
+
+# Create the nlp object
+nlp = Spanish()
+
+# Process a text (this is Spanish for: "How are you?")
+doc = nlp("¿Cómo estás?")
+
+# Print the document text
+print(doc.text)
+
+
+
+##### Documents, spans and tokens --1
+# Import the English language class and create the nlp object
+from spacy.lang.en import English
+nlp = English()
+
+# Process the text
+doc = nlp("I like tree kangaroos and narwhals.")
+
+# Select the first token
+first_token = doc[0]
+
+# Print the first token's text
+print(first_token.text)
+
+
+
+
+##### Documents, spans and tokens --2
+# Import the English language class and create the nlp object
+from spacy.lang.en import English
+nlp = English()
+
+# Process the text
+doc = nlp("I like tree kangaroos and narwhals.")
+
+# A slice of the Doc for "tree kangaroos"
+tree_kangaroos = doc[2:4]
+print(tree_kangaroos.text)
+
+# A slice of the Doc for "tree kangaroos and narwhals" (without the ".")
+tree_kangaroos_and_narwhals = doc[2:6]
+print(tree_kangaroos_and_narwhals.text)
+
+
+
+
+##### Lexical attributes 
+# Process the text
+doc = nlp("In 1990, more than 60% of people in East Asia were in extreme poverty. Now less than 4% are.")
+
+# Iterate over the tokens in the doc
+for token in doc:
+    # Check if the token resembles a number
+    if token.like_num:
+        # Get the next token in the document
+        next_token = doc[token.i+1]
+        # Check if the next token's text equals '%'
+        if next_token.text == '%':
+            print('Percentage found:', token.text)
+
+
+
+##### Model packages
+The labelled data that the model was trained on.
+
+
+##### Loading Models --1
+# Load the 'en_core_web_sm' model – spaCy is already imported
+nlp = spacy.load('en_core_web_sm')
+
+text = "It’s official: Apple is the first U.S. public company to reach a $1 trillion market value"
+
+# Process the text
+doc = nlp(text)
+
+# Print the document text
+print(doc.text)
+
+
+
+##### Loading Models  --2
+# Load the 'de_core_news_sm' model – spaCy is already imported
+nlp = spacy.load('de_core_news_sm')
+
+text = "Als erstes Unternehmen der Börsengeschichte hat Apple einen Marktwert von einer Billion US-Dollar erreicht"
+
+# Process the text
+doc = nlp(text)
+
+# Print the document text
+print(doc.text)
+
+
+
+##### Predicting linguistic annotations  --1
+text = "It’s official: Apple is the first U.S. public company to reach a $1 trillion market value"
+
+# Process the text
+doc = nlp(text)
+
+for token in doc:
+    # Get the token text, part-of-speech tag and dependency label
+    token_text = token.text
+    token_pos = token.pos_
+    token_dep = token.dep_
+    # This is for formatting only
+    print('{:<12}{:<10}{:<10}'.format(token_text, token_pos, token_dep))
+
+
+
+##### Predicting linguistic annotations  --2
+text = "It’s official: Apple is the first U.S. public company to reach a $1 trillion market value"
+
+# Process the text
+doc = nlp(text)
+
+# Iterate over the predicted entities
+for ent in doc.ents:
+    # print the entity text and its label
+    print(ent.text, ent.label_)
+
+
+##### Predicting named entities in context
+text = "New iPhone X release date leaked as Apple reveals pre-orders by mistake"
+
+# Process the text
+doc = nlp(text)
+
+# Iterate over the entities
+for ent in doc.ents:
+    # print the entity text and label
+    print(ent.text, ent.label_)
+
+
+
+
+##### 
+
+
+
+
+
+##### 
+
+
+
+
+
+##### 
+
+
+
+
+
