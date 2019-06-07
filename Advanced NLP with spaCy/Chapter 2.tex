@@ -26,31 +26,59 @@ print(person_string)
 The string 'Bowie' isn't present in the German vocab, so the hash can't be resolved in the string store.
 
 
-##### Creating a Doc
+##### Creating a Doc    -- 1
+# Import the Doc class
+from spacy.tokens import Doc
+
+# Desired text: "spaCy is cool!"
+words = ['spaCy', 'is', 'cool', '!']
+spaces = [True, True, False, False]
+
+# Create a Doc from the words and spaces
+doc = Doc(nlp.vocab, words=words, spaces=spaces)
+print(doc.text)
+
+
+
+##### Creating a Doc    -- 2
+# Import the Doc class
+from spacy.tokens import Doc
+
+# Desired text: "Go, get started!"
+words = ['Go', ',', 'get', 'started', '!']
+spaces = [False, True, True, False, False]
+
+# Create a Doc from the words and spaces
+doc = Doc(nlp.vocab, words=words, spaces=spaces)
+print(doc.text)
+
+
+
+##### Creating a Doc    -- 3
+# Import the Doc class
+from spacy.tokens import Doc
+
+# Desired text: "Oh, really?!"
+words = ['Oh',',', 'really','?', '!']
+spaces = [False, True, False, False, False]
+
+# Create a Doc from the words and spaces
+doc = Doc(nlp.vocab, words=words, spaces=spaces)
+print(doc.text)
+
+
+
+##### Docs, spans and entities from scratch
 
 
 
 
-##### 
+##### Docs, spans and entities from scratch
 
 
 
 
-##### 
-
-
-
-
-##### 
-
-
-
-
-##### 
-
-
-
-
+##### Docs, spans and entities from scratch
 ##### 
 
 
