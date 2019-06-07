@@ -112,8 +112,17 @@ print([(ent.text, ent.label_) for ent in doc.ents])
 
 
 
-##### 
+##### Data structures best practices  --1
+It only uses lists of strings instead of native token attributes. This is often less efficient, and can't express complex relationships.
 
+##### Data structures best practices  --2
+# Iterate over the tokens
+for token in doc:
+    # Check if the current token is a proper noun
+    if token.pos_ == 'PROPN':
+        # Check if the next token is a verb
+        if doc[token.i + 1].pos_ == 'VERB':
+            print('Found a verb after a proper noun!')
 
 
 
