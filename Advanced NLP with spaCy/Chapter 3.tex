@@ -1,0 +1,15 @@
+#################################   Processing Pipelines    ############################
+
+
+##### What happens when you call nlp?
+Tokenize the text and apply each pipeline component in order.
+
+##### Inspecting the pipeline
+# Load the en_core_web_sm model
+nlp = spacy.load('en_core_web_sm')
+
+# Print the names of the pipeline components
+print(nlp.pipe_names)
+
+# Print the full pipeline of (name, component) tuples
+print(nlp.pipeline)
