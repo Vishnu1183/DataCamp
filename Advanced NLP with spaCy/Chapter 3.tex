@@ -13,3 +13,91 @@ print(nlp.pipe_names)
 
 # Print the full pipeline of (name, component) tuples
 print(nlp.pipeline)
+
+
+##### Use cases for custom components
+2 and 3
+
+
+##### Simple components  --1
+# Define the custom component
+def length_component(doc):
+    # Get the doc's length
+    doc_length = len(doc)
+    print("This document is {} tokens long.".format(doc_length))
+    # Return the doc
+    return doc
+
+
+
+##### Simple components --2
+# Define the custom component
+def length_component(doc):
+    # Get the doc's length
+    doc_length = len(doc)
+    print("This document is {} tokens long.".format(doc_length))
+    # Return the doc
+    return doc
+
+# Load the small English model
+nlp = spacy.load('en_core_web_sm')
+  
+# Add the component first in the pipeline and print the pipe names
+nlp.add_pipe(length_component, first=True)
+print(nlp.pipe_names)
+
+
+
+##### Simple components --3
+# Define the custom component
+def length_component(doc):
+    # Get the doc's length
+    doc_length = len(doc)
+    print("This document is {} tokens long.".format(doc_length))
+    # Return the doc
+    return doc
+  
+# Load the small English model and Add the component first in the pipeline
+nlp = spacy.load('en_core_web_sm')
+nlp.add_pipe(length_component, first=True)
+
+# Process a text
+doc = doc = nlp("This is a sentence.")
+
+
+
+#####
+
+
+
+
+#####
+
+
+
+
+#####
+
+
+
+
+#####
+
+
+
+
+#####
+
+
+
+
+#####
+
+
+
+
+#####
+
+
+
+
