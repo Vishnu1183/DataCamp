@@ -249,3 +249,47 @@ people = ['David Bowie', 'Angela Merkel', 'Lady Gaga']
 
 # Create a list of patterns for the PhraseMatcher
 patterns = list(nlp.pipe(people))
+
+
+##### Processing data with context  ---1
+# Import the Doc class
+from spacy.tokens import Doc
+
+# Register the Doc extension 'author' (default None)
+Doc.set_extension('author', default = None)
+
+# Register the Doc extension 'book' (default None)
+Doc.set_extension('book', default = None)
+
+
+##### Processing data with context  ---2
+# Import the Doc class and register the extensions 'author' and 'book'
+from spacy.tokens import Doc
+Doc.set_extension('book', default=None)
+Doc.set_extension('author', default=None)
+
+for doc, context in nlp.pipe(DATA, as_tuples=True):
+    # Set the doc._.book and doc._.author attributes from the context
+    doc._.book = context['book']
+    doc._.author = context['author']
+    
+    # Print the text and custom attribute data
+    print(doc.text, '\n', "— '{}' by {}".format(doc._.book, doc._.author), '\n')
+    
+##### Selective processing  --1
+text = "Chick-fil-A is an American fast food restaurant chain headquartered in the city of College Park, Georgia, specializing in chicken sandwiches."
+
+# Only tokenize the text
+doc = nlp.make_doc(text)
+
+print([token.text for token in doc])
+    
+##### Selective processing  --2    
+text = "Chick-fil-A is an American fast food restaurant chain headquartered in the city of College Park, Georgia, specializing in chicken sandwiches."
+
+# Disable the tagger and parser
+with nlp.disable_pipes('tagger','parser'):
+    # Process the text
+    doc = nlp(text)
+    # Print the entities in the doc
+    print(doc.ents)
