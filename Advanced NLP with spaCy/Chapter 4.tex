@@ -129,27 +129,51 @@ for doc in nlp.pipe(TEST_DATA):
 70%
 
 
-##### 
+##### Good data vs. bad data   --1
+Whether a place is a tourist destination is a subjective judgement and not a definitive category. It will be very difficult for the entity recognizer to learn.
 
 
 
-##### 
+##### Good data vs. bad data   --2
+TRAINING_DATA = [
+    ("i went to amsterdem last year and the canals were beautiful", {'entities': [(10, 19, 'GPE')]}),
+    ("You should visit Paris once in your life, but the Eiffel Tower is kinda boring", {'entities': [(17, 22, 'GPE')]}),
+    ("There's also a Paris in Arkansas, lol", {'entities': [(15, 20, 'GPE'), (24, 32, 'GPE')]}),
+    ("Berlin is perfect for summer holiday: lots of parks, great nightlife, cheap beer!", {'entities': [(0, 6, 'GPE')]})
+]
+
+print(*TRAINING_DATA, sep='\n')
 
 
 
-##### 
+##### Training multiple labels  --1
+TRAINING_DATA = [
+    ("Reddit partners with Patreon to help creators build communities", 
+     {'entities': [(0, 6, 'WEBSITE'), (21, 28, 'WEBSITE')]}),
+  
+    ("PewDiePie smashes YouTube record", 
+     {'entities': [(18, 25, 'WEBSITE')]}),
+  
+    ("Reddit founder Alexis Ohanian gave away two Metallica tickets to fans", 
+     {'entities': [(0, 6, 'WEBSITE')]}),
+    # And so on...
+]
 
 
-
-##### 
-
-
-
-##### 
+##### Training multiple labels  --2
+The training data included no examples of PERSON, so the model learned that this label is incorrect.
 
 
-
-##### 
-
-
+##### Training multiple labels  --3
+TRAINING_DATA = [
+    ("Reddit partners with Patreon to help creators build communities", 
+     {'entities': [(0, 6, 'WEBSITE'), (21, 28, 'WEBSITE')]}),
+  
+    ("PewDiePie smashes YouTube record", 
+     {'entities': [(0, 9, 'PERSON'), (18, 25, 'WEBSITE')]}),
+  
+    ("Reddit founder Alexis Ohanian gave away two Metallica tickets to fans", 
+     {'entities': [(0, 6, 'WEBSITE'), (15, 29, 'PERSON')]}),
+    # And so on...
+]
 
