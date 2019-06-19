@@ -1,1 +1,54 @@
 ###############  Getting ready for object-oriented programming   ######################
+
+##### Understanding Object Dependencies
+Python object.
+
+##### Creating functions
+# Create function that returns the average of an integer list
+def average_numbers(num_list): 
+    avg = sum(num_list)/float(len(num_list)) # divide by length of list
+    return avg
+
+# Take the average of a list: my_avg
+my_avg = average_numbers([1, 2, 3, 4, 5, 6])
+
+# Print out my_avg
+print(my_avg)
+
+
+##### Creating a complex data type
+# Create a list that contains two lists: matrix
+matrix = [[1,2,3,4] , [5,6,7,8]]
+
+# Print the matrix list
+print(matrix)
+
+
+##### What are NumPy Arrays most similar to?
+Lists
+
+
+##### Create a function that returns a NumPy array
+# Import numpy as np
+import numpy  as np
+
+# List input: my_matrix
+my_matrix = [[1,2,3,4], [5,6,7,8]] 
+
+# Function that converts lists to arrays: return_array
+def return_array(matrix):
+    array = np.array(matrix, dtype = float)
+    return array
+    
+# Call return_array on my_matrix, and print the output
+print(return_array(my_matrix))
+
+
+##### Creating a class
+# Create a class: DataShell
+class DataShell: 
+    pass
+
+
+##### Difference between a class and an object
+Objects, classes.
