@@ -1,0 +1,123 @@
+################# Exploring high dimensional data ###################
+
+$$$$$ Finding the number of dimensions in a dataset
+7 dimensions
+
+
+$$$$$ Removing features without variance 1
+# Remove the feature without variance from this list
+number_cols = ['HP', 'Attack', 'Defense', ]
+#pokemon_df.describe()
+
+
+$$$$$ Removing features without variance 2
+# Remove the feature without variance from this list
+number_cols = ['HP', 'Attack', 'Defense']
+
+# Leave this list as is for now
+non_number_cols = ['Name', 'Type', 'Legendary']
+
+# Sub-select by combining the lists with chosen features
+df_selected = pokemon_df[number_cols + non_number_cols]
+
+# Prints the first 5 lines of the new dataframe
+print(df_selected.head())
+
+
+$$$$$ Removing features without variance 3
+
+# Leave this list as is
+number_cols = ['HP', 'Attack', 'Defense']
+
+# Remove the feature without variance from this list
+non_number_cols = ['Name', 'Type']
+
+# Create a new dataframe by subselecting the chosen features
+df_selected = pokemon_df[number_cols + non_number_cols]
+
+# Prints the first 5 lines of the new dataframe
+print(df_selected.head())
+
+
+$$$$$ Visually detecting redundant features 1
+# Create a pairplot and color the points using the 'Gender' feature
+sns.pairplot(ansur_df_1, hue='Gender', diag_kind='hist')
+
+# Show the plot
+plt.show()
+
+$$$$$ Visually detecting redundant features 1
+# Remove one of the redundant features
+reduced_df = ansur_df_1.drop('body_height', axis = 1)
+
+# Create a pairplot and color the points using the 'Gender' feature
+sns.pairplot(reduced_df, hue='Gender')
+
+# Show the plot
+plt.show()
+
+$$$$$ Visually detecting redundant features 1
+# Create a pairplot and color the points using the 'Gender' feature
+sns.pairplot(ansur_df_2, hue='Gender', diag_kind='hist')
+
+
+# Show the plot
+plt.show()
+
+$$$$$ Visually detecting redundant features 1
+# Remove the redundant feature
+reduced_df = ansur_df_2.drop('n_legs', axis = 1)
+
+# Create a pairplot and color the points using the 'Gender' feature
+sns.pairplot(reduced_df, hue='Gender', diag_kind='hist')
+
+# Show the plot
+plt.show()
+
+
+$$$$$ Advantage of feature selection
+
+The selected features remain unchanged, and are therefore easy to interpret.
+
+
+$$$$$ t-SNE intuition
+When you want to visually explore the patterns in a high dimensional dataset
+
+
+$$$$$ Fitting t-SNE to the ANSUR data
+# Non-numerical columns in the dataset
+non_numeric = ['Branch', 'Gender', 'Component']
+
+# Drop the non-numerical columns from df
+df_numeric = df.drop(non_numeric, axis=1)
+
+# Create a t-SNE model with learning rate 50
+m = TSNE(learning_rate = 50)
+
+# Fit and transform the t-SNE model on the numeric dataset
+tsne_features = m.fit_transform(df_numeric)
+print(tsne_features)
+
+
+$$$$$ t-SNE visualisation of dimensionality 1
+# Color the points according to Army Component
+sns.scatterplot(x="x", y="y", hue='Component', data=df)
+
+# Show the plot
+plt.show()
+
+
+$$$$$ t-SNE visualisation of dimensionality 2
+# Color the points by Army Branch
+sns.scatterplot(x="x", y="y", hue='Branch', data=df)
+
+# Show the plot
+plt.show()
+
+
+$$$$$ t-SNE visualisation of dimensionality 3
+# Color the points by Gender
+sns.scatterplot(x="x", y="y", hue='Gender', data=df)
+
+# Show the plot
+plt.show()
