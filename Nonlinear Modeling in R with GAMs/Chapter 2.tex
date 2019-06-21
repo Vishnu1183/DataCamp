@@ -1,0 +1,118 @@
+#######################  ###########################
+
+$$$$$ Significance and linearity (I)
+library(mgcv)
+# Fit the model
+mod_city4 <- gam(city.mpg ~ s(weight) + s(length) + s(price) + s(rpm) + s(width),
+                 data = mpg, method = "REML")
+
+# View the summary
+summary(mod_city4)
+
+
+$$$$$ Significance and linearity (I)
+price
+
+
+$$$$$ Significance and linearity (II)
+length
+
+
+$$$$$ Plotting the motorcycle crash model and data
+library(mgcv)
+# Fit the model
+mod <- gam(accel ~ s(times), data = mcycle, method = "REML")
+
+# Make the plot with residuals
+plot(mod, residuals=TRUE)
+
+# Change shape of residuals
+plot(mod, residuals = TRUE,
+pch = 1, cex = 1)
+
+
+$$$$$ Plotting multiple auto performance variables
+library(mgcv)
+# Fit the model
+mod <- gam(hw.mpg ~ s(weight) + s(rpm) + s(price) + comp.ratio, 
+           data = mpg, method = "REML")
+
+# Plot the price effect
+plot(mod, select = 3)
+
+# Plot all effects
+plot(mod, pages = 1, all.terms = TRUE)
+
+$$$$$ Visualizing auto performance uncertainty
+library(mgcv)
+# Fit the model
+mod <- gam(hw.mpg ~ s(weight) + s(rpm) + s(price) + comp.ratio, 
+           data = mpg, method = "REML")
+
+# Plot the weight effect with colored shading
+plot(mod, select = 1, shade = TRUE, shade.col = "hotpink")
+
+# Make another plot adding the intercept value and uncertainty
+plot(mod, select = 1, seWithMean = TRUE, shift = coef(mod)[1])
+
+
+$$$$$ Reading model diagnostics
+library(mgcv)
+# Fit the model
+mod <- gam(y ~ s(x0, k = 5) + s(x1, k = 5) + s(x2, k = 5) + s(x3, k = 5),
+           data = dat, method = "REML")
+
+# Run the check function
+gam.check(mod)
+
+
+$$$$$ Reading model diagnostics
+x2
+
+
+$$$$$ Fixing problems with model diagnostics
+library(mgcv)
+# Fit the model
+mod <- gam(y ~ s(x0, k = 3) + s(x1, k = 3) + s(x2, k = 3) + s(x3, k = 3),
+           data = dat, method = "REML")
+
+# Check the diagnostics
+gam.check(mod)
+
+# Refit to fix issues
+mod2 <- gam(y ~ s(x0, k = 3) + s(x1, k = 3) + s(x2, k = 10) + s(x3, k = 3),
+           data = dat, method = "REML")
+
+# Check the new model
+gam.check(mod2)
+
+
+$$$$$ Examining overall concurvity in auto data
+library(mgcv)
+# Fit the model
+mod <- gam(hw.mpg ~ s(length) + s(width) + s(height) + s(weight), 
+           data = mpg, method = "REML")
+
+# Check overall concurvity
+concurvity(mod, full = T)
+
+
+$$$$$ Examining overall concurvity in auto data
+s(height)
+
+
+$$$$$ Examining concurvity between auto variables
+library(mgcv)
+# Fit the model
+mod <- gam(hw.mpg ~ s(length) + s(width) + s(height) + s(weight), 
+           data = mpg, method = "REML")
+
+# Check pairwise concurvity
+concurvity(mod, full = FALSE)
+
+
+$$$$$ Examining concurvity between auto variables
+weight and width
+
+
+
