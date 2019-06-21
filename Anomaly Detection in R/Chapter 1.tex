@@ -1,0 +1,148 @@
+####################################### Anomaly Detection in R ##########################################
+
+$$$$$ Recognizing anomaly types
+A high volume of server requests from different users using an outdated web browser.
+
+$$$$$ Exploring the river nitrate data
+# Explore contents of dataset
+head(river)
+
+
+$$$$$ Exploring the river nitrate data 
+# Explore contents of dataset
+head(river)
+
+# Summary statistics of river nitrate concentrations
+summary(river$nitrate)
+
+
+$$$$$ Exploring the river nitrate data
+# Explore contents of dataset
+head(river)
+
+# Summary statistics of river nitrate concentrations
+summary(river$nitrate)
+
+# Plot the distribution of nitrate concentration
+boxplot(river$nitrate) 
+
+
+$$$$$ Visual check of normality
+head(river)
+
+# Plot a histogram of the nitrate column
+hist(river$nitrate)
+
+
+$$$$$ Visual check of normality
+# Add a Nitrate concentration label 
+hist(river$nitrate, xlab = "Nitrate concentration")
+
+
+$$$$$ Visual check of normality
+# Separate the histogram into 40 bins 
+hist(river$nitrate, xlab = "Nitrate concentration", breaks = 40)
+
+
+$$$$$ Grubbs' test
+# Apply Grubbs' test to the river nitrate data
+grubbs.test(river$nitrate)
+
+
+$$$$$ Hunting multiple outliers using Grubbs' test
+# Apply Grubbs' test to the nitrate data
+grubbs.test(river$nitrate)
+
+# Find row index of the max of the nitrate data
+which.max(river$nitrate )
+
+
+$$$$$ Hunting multiple outliers using Grubbs' test
+ # Apply Grubbs' test to the nitrate data
+grubbs.test(river$nitrate)
+
+# Find row index of the max of the nitrate data
+which.max(river$nitrate)
+
+# Runs Grubbs' test excluding row 156
+grubbs.test(river$nitrate[-156])
+
+
+$$$$$ Hunting multiple outliers using Grubbs' test
+# Apply Grubbs' test to the nitrate data
+grubbs.test(river$nitrate)
+
+# Use which.max to find row index of the max
+which.max(river$nitrate)
+
+# Runs Grubbs' test excluding row 156
+grubbs.test(river$nitrate[-156])
+
+# Print the value tested in the second Grubbs' test
+max(river$nitrate[-156])
+
+
+$$$$$ Visual assessment of seasonality
+# View contents of dataset
+head(river)
+
+# Show the time series of nitrate concentrations with time
+plot(nitrate ~ index, data = river, type = "o")
+
+
+$$$$$ Visual assessment of seasonality
+# View contents of dataset
+head(river)
+
+# Show the time series of nitrate concentrations with time
+plot(nitrate ~ index, data = river, type = "o")
+
+# Calculate the mean nitrate by month
+monthly_mean <- tapply(river$nitrate, river$months, FUN = mean)
+monthly_mean
+
+# Plot the monthly means 
+plot(monthly_mean, type = 'o', xlab = "Month", ylab = "Monthly mean")
+
+
+$$$$$ Visual assessment of seasonality
+# View contents of dataset
+head(river)
+
+# Show the time series of nitrate concentrations with time
+plot(nitrate ~ index, data = river, type = "o")
+
+# Calculate the mean nitrate by month
+monthly_mean <- tapply(river$nitrate, river$months, FUN = mean)
+monthly_mean
+
+# Plot the monthly means 
+plot(monthly_mean, type = "o", xlab = "Month", ylab = "Monthly mean")
+
+# Create a boxplot of nitrate against months
+boxplot(nitrate ~ months, data = river)
+
+
+$$$$$ Seasonal Hybrid ESD algorithm 
+# Run Seasonal-Hybrid ESD for nitrate concentrations
+AnomalyDetectionVec(river$nitrate, period =12, direction = 'both', plot = T)
+
+
+$$$$$ Interpreting Seasonal-Hybrid ESD output
+# Use Seasonal-Hybrid ESD for nitrate concentrations
+river_anomalies <- AnomalyDetectionVec(river$nitrate, period =12, direction = 'both', plot = T)
+
+
+$$$$$ Interpreting Seasonal-Hybrid ESD output
+# Use Seasonal-Hybrid ESD for nitrate concentrations
+river_anomalies <- AnomalyDetectionVec(x = river$nitrate, period = 12, direction = 'both', plot = T)
+
+# Print the anomalies
+river_anomalies$anoms
+
+# Print the plot
+print(river_anomalies$plot)
+
+
+$$$$$ Seasonal-Hybrid ESD versus Grubbs' test
+The extra anomalies are unusual with respect to the seasonal contribution at their time of occurrence.
