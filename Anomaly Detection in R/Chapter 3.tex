@@ -1,78 +1,106 @@
 ############################# Isolation forest  #####################################
 
 $$$$$ Fit and predict with an isolation tree
+# Build an isolation tree 
+wine_tree <- iForest(wine, nt = 1)
 
 
+$$$$$ Fit and predict with an isolation tree
+# Build an isolation tree 
+wine_tree <- iForest(wine, nt = 1)
 
-$$$$$ 
-
-
-
-$$$$$ 
-
-
-
-$$$$$ 
+# Create isolation score
+wine$tree_score <- predict(wine_tree, wine)
 
 
+$$$$$ Fit and predict with an isolation tree
+# Build an isolation tree 
+wine_tree <- iForest(wine, nt = 1)
 
-$$$$$ 
+# Create isolation score
+wine$tree_score <- predict(wine_tree, newdata = wine)
 
-
-
-$$$$$ 
-
-
-
-$$$$$ 
-
+# Histogram plot of the scores
+hist(wine$tree_score, breaks = 40)
 
 
-$$$$$ 
+$$$$$ Score interpretation
+Wine 1061 has a score greater than 0.6 which indicates a possible anomaly.
 
 
-
-$$$$$ 
-
-
-
-$$$$$ 
+$$$$$ Fit an isolation forest
+# Fit isolation forest
+wine_forest <- iForest(wine, nt = 100)
 
 
-
-$$$$$ 
-
-
-
-$$$$$ 
+$$$$$ Fit an isolation forest
+# Fit isolation forest
+wine_forest <- iForest(wine, nt = 100, phi = 200)
 
 
+$$$$$ Fit an isolation forest
+# Fit isolation forest
+wine_forest <- iForest(wine, nt = 100, phi = 200)
 
-$$$$$ 
+# Create isolation score from forest
+wine_score <- predict(wine_forest,wine)
 
-
-
-$$$$$ 
-
-
-
-$$$$$ 
-
+# Append score to the wine data
+wine$score <- wine_score
 
 
-$$$$$ 
+$$$$$ Checking convergence
+# View the contents of the wine scores
+head(wine_scores)
+
+# Scatterplot of 2000 trees vs 1000 trees scores
+plot(trees_2000 ~ trees_1000, wine_scores)
 
 
+$$$$$ Checking convergence
+# View the contents of the wine scores
+head(wine_scores)
 
-$$$$$ 
+# Score scatterplot 2000 vs 1000 trees 
+plot(trees_2000 ~ trees_1000, data = wine_scores)
+
+# Add reference line of equality
+abline(a = 0, b = 1)
 
 
-
-$$$$$ 
-
-
-
-$$$$$ 
+$$$$$ A grid of points
+# Sequence of values for pH and alcohol
+ph_seq <- seq(min(wine$pH),  max(wine$pH) , length.out = 25)
+alcohol_seq <- seq(min(wine$alcohol),  max(wine$alcohol) , length.out = 25)
 
 
+$$$$$ A grid of points
+# Sequence of values for pH and alcohol
+ph_seq <- seq(min(wine$pH),  max(wine$pH), length.out = 25)
+alcohol_seq <- seq(min(wine$alcohol),  max(wine$alcohol), length.out = 25)
+
+# Create a data frame of grid coordinates
+wine_grid <-expand.grid(Width = ph_seq, Height = alcohol_seq)
+
+
+$$$$$ A grid of points
+# Sequence of values for pH and alcohol
+ph_seq <- seq(min(wine$pH), max(wine$pH), length.out = 25)
+alcohol_seq <- seq(min(wine$alcohol),  max(wine$alcohol), length.out = 25)
+
+# Create a data frame of grid coordinates
+wine_grid <- expand.grid(pH = ph_seq, alcohol = alcohol_seq)
+
+# Visualise the grid using a scatterplot
+plot(pH ~ alcohol, data = wine_grid, pch = 20)
+
+
+$$$$$ Prediction over a grid
+# Calculate isolation score at grid locations
+wine_grid$score <- predict(wine_forest, wine_grid)
+
+
+$$$$$ Anomaly contours
+# Contour plot of isolation scores
+contourplot(score ~ pH + alcohol, wine_grid, region = TRUE)
 
