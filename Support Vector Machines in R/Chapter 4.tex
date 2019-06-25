@@ -1,0 +1,177 @@
+################################## Radial Basis Function Kernels ########################################
+
+$$$$$ Generating a complex dataset - part 1
+#number of data points
+n <- 1000
+
+#set seed
+set.seed(1)
+
+#create dataframe
+df <- data.frame(x1 = rnorm(n, mean = -0.5, sd = 1), 
+                 x2 = runif(n, min = -1, max = 1))
+
+
+$$$$$ Generating a complex dataset - part 2
+#set radius and centers
+radius <- 0.8
+center_1 <- c(-0.8, 0)
+center_2 <- c(0.8, 0)
+radius_squared <- radius^2
+
+#create binary classification variable
+df$y <- factor(ifelse((df$x1-center_1[1])^2 + (df$x2-center_1[2])^2 < radius_squared|
+                      (df$x1-center_2[1])^2 + (df$x2-center_2[2])^2 < radius_squared, -1, 1),
+                      levels = c(-1, 1))
+
+
+$$$$$ Visualizing the dataset
+# Load ggplot2
+library(ggplot2)
+
+# Plot x2 vs. x1, colored by y
+scatter_plot<- ggplot(data = df, aes(x = x1, y = x2, color = y)) + 
+    # Add a point layer
+    geom_point() + 
+    scale_color_manual(values = c("red", "blue")) +
+    # Specify equal coordinates
+    coord_equal()
+ 
+scatter_plot 
+
+
+$$$$$ Linear SVM for complex dataset
+#build model
+svm_model<- 
+    svm(y ~ ., data = trainset, type = "C-classification", 
+        kernel = "linear")
+
+
+
+$$$$$ Linear SVM for complex dataset
+#build model
+svm_model<- 
+    svm(y ~ ., data = trainset, type = "C-classification", 
+        kernel = "linear")
+
+#accuracy
+pred_train <- predict(svm_model, trainset)
+mean(pred_train == trainset$y)
+pred_test <- predict(svm_model, testset)
+mean(pred_test == testset$y)
+
+
+
+$$$$$ Linear SVM for complex dataset
+#build model
+svm_model<- 
+    svm(y ~ ., data = trainset, type = "C-classification", 
+        kernel = "linear")
+
+#accuracy
+pred_train <- predict(svm_model, trainset)
+mean(pred_train == trainset$y)
+pred_test <- predict(svm_model, testset)
+mean(pred_test == testset$y)
+
+#plot model against testset
+plot(svm_model, testset)
+
+
+$$$$$ Quadratic SVM for complex dataset
+#build model
+svm_model<- 
+    svm(y ~ ., data = trainset, type = "C-classification",
+        kernel = 'polynomial', degree = 2)
+
+
+
+$$$$$ Quadratic SVM for complex dataset
+#build model
+svm_model<- 
+    svm(y ~ ., data = trainset, type = "C-classification", 
+        kernel = "polynomial", degree = 2)
+
+#accuracy
+pred_train <- predict(svm_model, trainset)
+mean(pred_train == trainset$y)
+pred_test <- predict(svm_model, testset)
+mean(pred_test == testset$y)
+
+
+
+$$$$$ Quadratic SVM for complex dataset
+#build model
+svm_model<- 
+    svm(y ~ ., data = trainset, type = "C-classification", 
+        kernel = "polynomial", degree = 2)
+
+#accuracy
+pred_train <- predict(svm_model, trainset)
+mean(pred_train == trainset$y)
+pred_test <- predict(svm_model, testset)
+mean(pred_test == testset$y)
+
+#plot model
+plot(svm_model, trainset)
+
+
+$$$$$ Polynomial SVM on a complex dataset
+#create vector to store accuracies and set random number seed
+accuracy <- rep(NA, 100)
+set.seed(2)
+
+
+
+$$$$$ Polynomial SVM on a complex dataset
+
+
+
+$$$$$ Polynomial SVM on a complex dataset
+
+
+
+$$$$$ RBF SVM on a complex dataset
+
+
+
+$$$$$ RBF SVM on a complex dataset
+
+
+
+$$$$$ RBF SVM on a complex dataset
+
+
+
+$$$$$ 
+
+
+
+$$$$$ 
+
+
+
+$$$$$ 
+
+
+
+$$$$$ 
+
+
+
+$$$$$ 
+
+
+
+$$$$$ 
+
+
+
+$$$$$ 
+
+
+
+$$$$$ 
+
+
+
